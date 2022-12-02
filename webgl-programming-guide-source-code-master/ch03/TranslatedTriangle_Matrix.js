@@ -1,4 +1,4 @@
-// RotatedTriangle_Matrix.js (c) matsuda
+// TranslatedTriangle_Matrix.js (c) matsuda
 // Vertex shader program
 var VSHADER_SOURCE =
   'attribute vec4 a_Position;\n' +
@@ -13,8 +13,8 @@ var FSHADER_SOURCE =
   '  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
   '}\n';
 
-// The rotation angle
-var ANGLE = 90.0;
+// translation distances
+var Tx = 0.5, Ty = 0.5, Tz = 0.0;
 
 function main() {
   // Retrieve <canvas> element
@@ -40,17 +40,12 @@ function main() {
     return;
   }
 
-  // Create a rotation matrix
-  var radian = Math.PI * ANGLE / 180.0; // Convert to radians
-  var cosB = Math.cos(radian), sinB = Math.sin(radian);
-
   // Note: WebGL is column major order
   var xformMatrix = new Float32Array([
-  //  x'     y'   z'   1 
-     cosB, sinB, 0.0, 0.0,
-    -sinB, cosB, 0.0, 0.0,
-      0.0,  0.0, 1.0, 0.0,
-      0.0,  0.0, 0.0, 1.0
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      Tx, Ty, Tz, 1.0
   ]);
 
   // Pass the rotation matrix to the vertex shader

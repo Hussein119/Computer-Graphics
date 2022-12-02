@@ -45,6 +45,9 @@ function main() {
   var Tx = 0.5;     // Translation distance
   modelMatrix.setRotate(ANGLE, 0, 0, 1);  // Set rotation matrix
   modelMatrix.translate(Tx, 0, 0);        // Multiply modelMatrix by the calculated translation matrix
+  
+  
+  
 
   // Pass the model matrix to the vertex shader
   var u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');

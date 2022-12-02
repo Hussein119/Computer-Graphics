@@ -20,7 +20,7 @@ var FSHADER_SOURCE =
   '}\n';
 
 // The rotation angle
-var ANGLE = 90.0;  // If you specify a negative value to ANGLE , you can rotate the  
+var ANGLE = 0.0;  // If you specify a negative value to ANGLE , you can rotate the  
                    //   triangle in the opposite direction (clockwise).
 
 function main() {
@@ -73,7 +73,7 @@ function main() {
 
 function initVertexBuffers(gl) {
   var vertices = new Float32Array([
-    0, 0.5,   -0.5, -0.5,   0.5, -0.5
+    0.5,0,  -0.5,0.5,    -0.5,-0.5
   ]);
   var n = 3; // The number of vertices
 

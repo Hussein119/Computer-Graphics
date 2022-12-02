@@ -84,14 +84,14 @@ gl.clearColor (1.0,1.0,0.0,1.0);
 // Clear canvas 
 gl.clear(gl.COLOR_BUFFER_BIT);
 // Draw 
-gl.drawArrays(gl.TRIANGLE_FAN,0,n);
+gl.drawArrays(2,0,n);
 }
 
 function initVertexBuffers(gl) {
     var vertices = new Float32Array([
-      -0.5, 0.5, -0.5, -0.5, 0.5, 0.5,0.5, -0.5
+      -0.25, -0.25,-0.25, 0.25,0.0, 0.25,0.25,-0.25 , 0.5 ,0.9
     ]);
-    var n = 4; // The number of vertices
+    var n = 5; // The number of vertices
   
     // Create a buffer object
     var vertexBuffer = gl.createBuffer();

@@ -59,7 +59,7 @@ function initVertexBuffers(gl) {
   ]);
 
   // Create a buffer object
-  var vertexBuffer = gl.createBuffer();  
+  var vertexBuffer = gl.createBuffer();
   var sizeBuffer = gl.createBuffer();
   if (!vertexBuffer || !sizeBuffer) {
     console.log('Failed to create the buffer object');

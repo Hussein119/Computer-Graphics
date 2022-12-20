@@ -88,7 +88,7 @@ function initVertexBuffers(gl) {
   }
 
   // Pass the width and hight of the <canvas>
-  gl.uniform1f(u_Width, gl.drawingBufferWidth);
+  gl.uniform1f(u_Width, gl.drawingBufferWidth ); // gl.drawingBufferWidth = 400 (canvas width)
   gl.uniform1f(u_Height, gl.drawingBufferHeight);
 
   // Enable the generic vertex attribute array

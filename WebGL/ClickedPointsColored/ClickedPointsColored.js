@@ -62,9 +62,9 @@ function main() {
 var g_points = []; // The array for the position of a mouse press
 var g_color =[]; // The array for the color of a_color
 function click(ev, gl, canvas, a_Position,a_color) {
-  var x = ev.clientX; // x coordinate of a mouse pointer
-  var y = ev.clientY; // y coordinate of a mouse pointer
-  var rect = ev.target.getBoundingClientRect() ;
+ var x = ev.clientX; // x coordinate of a mouse pointer
+ var y = ev.clientY; // y coordinate of a mouse pointer
+ var rect = ev.target.getBoundingClientRect() ;
 
   x = ((x - rect.left) - canvas.width/2)/(canvas.width/2);
   y = (canvas.height/2 - (y - rect.top))/(canvas.height/2);

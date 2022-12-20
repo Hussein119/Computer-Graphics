@@ -11,9 +11,7 @@ var VSHADER_SOURCE =
 
 // Fragment shader program
 var FSHADER_SOURCE = 
-  '#ifdef GL_ES\n' +
   'precision mediump float;\n' +
-  '#endif GL_ES\n' +
   'varying vec4 v_Color;\n' +
   'void main() {\n' +
   '  gl_FragColor = v_Color;\n' +
@@ -50,15 +48,15 @@ function main() {
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // Draw the rectangle
-  gl.drawArrays(gl.TRIANGLES, 0, n);
+  gl.drawArrays(gl.LINE_LOOP, 0, n);
 }
 
 function initVertexBuffers(gl) {
   var verticesColors = new Float32Array([
     // Vertex coordinates and color
      0.0,  0.5,  1.0,  0.0,  0.0, 
-    -0.5, -0.5,  0.0,  1.0,  0.0, 
-     0.5, -0.5,  0.0,  0.0,  1.0, 
+    -0.5, -0.5,  0.0,  0.0,  1.0, 
+     0.5, -0.5,  0.0,  1.0,  0.0, 
   ]);
   var n = 3;
 

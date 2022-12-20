@@ -2,7 +2,7 @@
 // Vertex shader program
 var VSHADER_SOURCE =
   // x' = x cosβ - y sinβ
-  // y' = x sinβ + y cosβ　Equation 3.3
+  // y' = x sinβ + y cosβ　
   // z' = z
   'attribute vec4 a_Position;\n' +
   'uniform float u_CosB, u_SinB;\n' +
@@ -20,7 +20,7 @@ var FSHADER_SOURCE =
   '}\n';
 
 // The rotation angle
-var ANGLE = 0.0;  // If you specify a negative value to ANGLE , you can rotate the  
+var ANGLE = 45.0;  // If you specify a negative value to ANGLE , you can rotate the  
                    //   triangle in the opposite direction (clockwise).
 
 function main() {
@@ -73,7 +73,7 @@ function main() {
 
 function initVertexBuffers(gl) {
   var vertices = new Float32Array([
-    0.5,0,  -0.5,0.5,    -0.5,-0.5
+    0, 0.5,   -0.5, -0.5,   0.5, -0.5
   ]);
   var n = 3; // The number of vertices
 

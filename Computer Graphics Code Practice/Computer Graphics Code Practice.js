@@ -443,7 +443,7 @@ gl.enableVertexAttribArray(Position);
     return n ;
 }
 */
-
+/*
 // RotatedTranslatedTriangle 
 // TranslatedRotatedTriangle
 var Vshader =`
@@ -545,4 +545,73 @@ var Position = gl.getAttribLocation(gl.program,'Position');
 gl.vertexAttribPointer(Position,2,gl.FLOAT,false,0,0);
 gl.enableVertexAttribArray(Position);
     return n ;
+}
+*/
+//RotatingTriangle
+var Vshader =`
+attribute vec4 Position;
+uniform mat4 aMatrix;
+void main(){
+gl_Position = aMatrix * Position;
+}`;
+var Fshader=`
+precision mediump float;
+uniform vec4 fragColor;
+void main(){
+gl_FragColor = fragColor;
+}`;
+var ANGLE_STEP = 45.0;
+function main(){
+var canvas = document.getElementById("webgl");
+var gl = canvas.getContext('webgl');
+
+if(!initShaders(gl,Vshader,Fshader)){
+    alert("Cannot pass Vshader and Fshader !!");
+    return;
+}
+
+var n = initBuffers(gl);
+
+gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+var aMatrix = gl.getUniformLocation(gl.program,'aMatrix');
+
+var fragColor = gl.getUniformLocation(gl.program,'fragColor');
+gl.uniform4f(fragColor,1.0,0.0,0.0,1.0);
+
+var tMatrix = new Matrix4();
+var currentAngle = 0.0;
+
+var tick = function(){
+currentAngle = animate(currentAngle);
+draw(gl,n,currentAngle,tMatrix,aMatrix);
+};
+tick();
+}
+function initBuffers (gl){
+var vertices = new Float32Array([
+    0, 0.3,   -0.3, -0.3,   0.3, -0.3
+]);
+var n = 3;
+var vBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,vBuffer);
+gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STATIC_DRAW);
+var Position = gl.getAttribLocation(gl.program,'Position');
+gl.vertexAttribPointer(Position,2,gl.FLOAT,false,0,0);
+gl.enableVertexAttribArray(Position);
+return n ;
+}
+function draw(gl,n,currentAngle,tMatrix,aMatrix){
+tMatrix.setRotate(currentAngle,0,0,1);
+gl.uniformMatrix4fv(aMatrix,false,tMatrix.elements);
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.drawArrays(gl.TRIANGLES,0,n);
+}
+var last = Date.now();
+function animate(angle){
+var now = Date.now();
+var elapsed = now - last;
+last = now; 
+var newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
+return newAngle %= 360;
 }

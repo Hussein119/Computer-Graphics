@@ -846,3 +846,90 @@ gl.enableVertexAttribArray(Position);
 return n;
 }
 */
+//  Square Animate right and left
+var VSHADER_SOURCE =`
+  attribute vec4 a_Position;
+  uniform mat4 u_ModelMatrix;
+  void main() {
+    gl_Position = u_ModelMatrix * a_Position;
+  }`;
+var FSHADER_SOURCE =`
+ void main() { 
+   gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}`;
+function main() {
+  var canvas = document.getElementById("webgl");
+  var gl = getWebGLContext(canvas);
+
+  if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
+    alert("Failed to intialize shaders.");
+  }
+ 
+  var n = initVertexBuffers(gl);
+
+  gl.clearColor(0, 0, 0, 1);
+ 
+  var u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
+ 
+  var tr = 0.0;
+
+  var modelMatrix = new Matrix4();
+
+  var right = 1;
+
+  var tick = function () {
+    tr = animate(tr, right);
+    if (tr >= 0.7) right = 0;
+    else if (tr <= -0.7) right = 1;
+    draw(gl, n, 0, modelMatrix, u_ModelMatrix, tr); 
+    requestAnimationFrame(tick); 
+  };
+  tick();
+}
+ 
+function initVertexBuffers(gl) {
+  var vertices = new Float32Array([-0.3, 0.3, -0.3, -0.3, 0.3, -0.3, 0.3, 0.3]);
+  var n = 4; // The number of vertices
+ 
+  // Create a buffer object
+  var vertexBuffer = gl.createBuffer();
+  if (!vertexBuffer) {
+    console.log("Failed to create the buffer object");
+    return -1;
+  }
+ 
+  // Bind the buffer object to target
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  // Write date into the buffer object
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+ 
+  // Assign the buffer object to a_Position variable
+  var a_Position = gl.getAttribLocation(gl.program, "a_Position");
+  if (a_Position < 0) {
+    console.log("Failed to get the storage location of a_Position");
+    return -1;
+  }
+  gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+ 
+  // Enable the assignment to a_Position variable
+  gl.enableVertexAttribArray(a_Position);
+ 
+  return n;
+}
+function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix, tr) {
+  // Set the rotation matrix
+  modelMatrix.setRotate(currentAngle, 0, 0, 1);
+  modelMatrix.translate(tr, 0, 0);
+ 
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+ 
+  gl.clear(gl.COLOR_BUFFER_BIT);
+ 
+  gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
+}
+function animate(tr, right) {
+  var newTR = tr;
+  if (right == 1) newTR += 0.01;
+  else newTR -= 0.01;
+  return newTR;
+}

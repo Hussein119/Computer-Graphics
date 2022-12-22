@@ -443,6 +443,7 @@ gl.enableVertexAttribArray(Position);
     return n ;
 }
 */
+// Ch4
 /*
 // RotatedTranslatedTriangle 
 // TranslatedRotatedTriangle
@@ -663,7 +664,7 @@ gl.enableVertexAttribArray(Position);
     return n ;
 }
 */
-
+/*
 //RotatingTriangle
 var Vshader =`
 attribute vec4 Position;
@@ -702,6 +703,7 @@ var currentAngle = 0.0;
 var tick = function(){
 currentAngle = animate(currentAngle);
 draw(gl,n,currentAngle,tMatrix,aMatrix);
+requestAnimationFrame(tick); 
 };
 tick();
 }
@@ -733,4 +735,114 @@ last = now;
 var newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
 return newAngle %= 360;
 }
+*/
+// Ch5
+/*
+// ColoredTriangle
+var Vshader =`
+attribute vec4 Position;
+attribute vec4 vColor;
+varying vec4 fColor;
+void main(){
+gl_Position = Position;
+fColor = vColor;
+}`;
+var Fshader =`
+precision mediump float;
+varying vec4 fColor;
+void main(){
+gl_FragColor = fColor;
+}`;
 
+function main(){
+var canvas = document.getElementById("webgl");
+var gl = canvas.getContext('webgl');
+
+if(!initShaders(gl,Vshader,Fshader)){
+    alert("Cannot pass Vshader and Fshader");
+}
+
+var n = initBuffers(gl);
+
+gl.clearColor(0.0, 0.0, 0.0, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.drawArrays(gl.TRIANGLES, 0, n);
+}
+function initBuffers(gl){
+var vertices = new Float32Array([
+    0.0,  0.3,  1.0,  0.0,  0.0,
+   -0.3, -0.3,  0.0 , 1.0 , 0.0,
+    0.3, -0.3,  0.0 , 0.0 , 1.0
+]);
+var n =3;
+
+var vBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,vBuffer)
+gl.bufferData(gl.ARRAY_BUFFER, vertices ,gl.STATIC_DRAW);
+
+var fSize = vertices.BYTES_PER_ELEMENT;
+
+var Position = gl.getAttribLocation(gl.program, 'Position');
+gl.vertexAttribPointer(Position,2 ,gl.FLOAT ,false ,fSize*5 ,0);
+gl.enableVertexAttribArray(Position);
+
+var vColor = gl.getAttribLocation(gl.program, 'vColor');
+gl.vertexAttribPointer(vColor,2 ,gl.FLOAT ,false ,fSize*5 ,fSize*2);
+gl.enableVertexAttribArray(vColor);
+
+return n;
+}
+*/
+/*
+// HelloTriangle_FragCoord 
+var Vshader =`
+attribute vec4 Position;
+void main(){
+gl_Position = Position;
+}`;
+var Fshader =`
+precision mediump float;
+uniform float Width;
+uniform float Height;
+void main(){
+gl_FragColor = vec4 (gl_FragCoord.x/Width ,0.0, gl_FragCoord.y/Height ,1.0);
+}`;
+function main(){
+var canvas = document.getElementById("webgl");
+var gl = canvas.getContext('webgl');
+
+if(!initShaders(gl,Vshader,Fshader)){
+    alert("Cannot pass Vshader and Fshader !!");
+}
+
+var n = initBuffer(gl);
+
+gl.clearColor(0.0, 0.0, 0.0, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.drawArrays(gl.TRIANGLES, 0, n);
+}
+function initBuffer (gl){
+var vertices = new Float32Array([
+    0, 0.5,   -0.5, -0.5,   0.5, -0.5
+]);
+var n = 3;
+
+var vBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STATIC_DRAW);
+
+var Position = gl.getAttribLocation(gl.program, 'Position');
+
+gl.vertexAttribPointer(Position,2,gl.FLOAT,false,0,0);
+
+var Width = gl.getUniformLocation(gl.program, 'Width');
+gl.uniform1f(Width, gl.drawingBufferWidth);
+
+var Height = gl.getUniformLocation(gl.program, 'Height');
+gl.uniform1f(Height, gl.drawingBufferHeight);
+
+gl.enableVertexAttribArray(Position);
+
+return n;
+}
+*/

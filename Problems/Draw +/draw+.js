@@ -13,6 +13,9 @@ uniform vec4 u_FrageColor;
 void main(){
     gl_FragColor = u_FrageColor;
 }`; 
+
+var pointSize = 10.0;
+
 function main(){
 // Retrive canvas element 
 var canvas = document.getElementById('mycanvas');
@@ -49,7 +52,7 @@ if(u_FrageColor<0){
 // pass vertex position to attribute variable  
 gl.vertexAttrib3f(a_Position,0.0,0.0,0.0);
 // pass vertex PointSize to attribute variable  
-gl.vertexAttrib1f(a_PointSize,10.0);
+gl.vertexAttrib1f(a_PointSize,pointSize);
 // pass vertex FrageColor to attribute variable  
 gl.uniform4f(u_FrageColor,1.0,1.0,0.0,1.0);
 
@@ -62,19 +65,17 @@ gl.clear(gl.COLOR_BUFFER_BIT);
 gl.drawArrays(gl.points,0,1);
 
 for(i=1;i<10;i++){
+
     x=i/10;
-    //gl.vertexAttrib3f(a_Position,x,0.0,0.0);
-    //gl.drawArrays(gl.points,0,1);
+    gl.vertexAttrib3f(a_Position,x,0.0,0.0);
+    gl.drawArrays(gl.points,0,1);
     gl.vertexAttrib3f(a_Position,-x,0.0,0.0);
     gl.drawArrays(gl.points,0,1);
 
     y=i/10;
     gl.vertexAttrib3f(a_Position,0.0,y,0.0);
     gl.drawArrays(gl.points,0,1);
-    //gl.vertexAttrib3f(a_Position,0.0,-y,0.0);
-    //gl.drawArrays(gl.points,0,1);
+    gl.vertexAttrib3f(a_Position,0.0,-y,0.0);
+    gl.drawArrays(gl.points,0,1);
 }
-
-
-
 }

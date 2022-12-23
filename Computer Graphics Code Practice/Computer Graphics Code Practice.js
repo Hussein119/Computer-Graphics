@@ -111,7 +111,7 @@ function click(ev,gl,canvas,Position){
     }
 }
 */
-// Ch3 
+// Ch3
 /*
 // MultiPoint
 var Vshader = `
@@ -679,6 +679,10 @@ void main(){
 gl_FragColor = fragColor;
 }`;
 var ANGLE_STEP = 45.0;
+
+var Trans_STEP = 1.0;
+var Tx=0;
+
 function main(){
 var canvas = document.getElementById("webgl");
 var gl = canvas.getContext('webgl');
@@ -722,7 +726,7 @@ return n ;
 }
 function draw(gl,n,currentAngle,tMatrix,aMatrix){
 tMatrix.setRotate(currentAngle,0,0,1);
-tMatrix.translate(0.35, 0, 0);
+tMatrix.translate(Tx, 0, 0);
 gl.uniformMatrix4fv(aMatrix,false,tMatrix.elements);
 gl.clear(gl.COLOR_BUFFER_BIT);
 gl.drawArrays(gl.TRIANGLES,0,n);
@@ -733,6 +737,9 @@ var now = Date.now();
 var elapsed = now - last;
 last = now; 
 var newAngle = angle + (ANGLE_STEP * elapsed) / 1000.0;
+Tx = Tx + (Trans_STEP * elapsed) / 1000.0;
+if(Tx>0.8||Tx<-0.8)
+Trans_STEP=-1*Trans_STEP;
 return newAngle %= 360;
 }
 */
@@ -846,14 +853,15 @@ gl.enableVertexAttribArray(Position);
 return n;
 }
 */
+/*
 //  Square Animate right and left
-var VSHADER_SOURCE =`
+var VSHADER_SOURCE = `
   attribute vec4 a_Position;
   uniform mat4 u_ModelMatrix;
   void main() {
     gl_Position = u_ModelMatrix * a_Position;
   }`;
-var FSHADER_SOURCE =`
+var FSHADER_SOURCE = `
  void main() { 
    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }`;
@@ -864,13 +872,13 @@ function main() {
   if (!initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)) {
     alert("Failed to intialize shaders.");
   }
- 
+
   var n = initVertexBuffers(gl);
 
   gl.clearColor(0, 0, 0, 1);
- 
+
   var u_ModelMatrix = gl.getUniformLocation(gl.program, "u_ModelMatrix");
- 
+
   var tr = 0.0;
 
   var modelMatrix = new Matrix4();
@@ -881,28 +889,28 @@ function main() {
     tr = animate(tr, right);
     if (tr >= 0.7) right = 0;
     else if (tr <= -0.7) right = 1;
-    draw(gl, n, 0, modelMatrix, u_ModelMatrix, tr); 
-    requestAnimationFrame(tick); 
+    draw(gl, n, 0, modelMatrix, u_ModelMatrix, tr);
+    requestAnimationFrame(tick);
   };
   tick();
 }
- 
+
 function initVertexBuffers(gl) {
   var vertices = new Float32Array([-0.3, 0.3, -0.3, -0.3, 0.3, -0.3, 0.3, 0.3]);
   var n = 4; // The number of vertices
- 
+
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) {
     console.log("Failed to create the buffer object");
     return -1;
   }
- 
+
   // Bind the buffer object to target
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
   // Write date into the buffer object
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
- 
+
   // Assign the buffer object to a_Position variable
   var a_Position = gl.getAttribLocation(gl.program, "a_Position");
   if (a_Position < 0) {
@@ -910,21 +918,21 @@ function initVertexBuffers(gl) {
     return -1;
   }
   gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
- 
+
   // Enable the assignment to a_Position variable
   gl.enableVertexAttribArray(a_Position);
- 
+
   return n;
 }
 function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix, tr) {
   // Set the rotation matrix
   modelMatrix.setRotate(currentAngle, 0, 0, 1);
   modelMatrix.translate(tr, 0, 0);
- 
+
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
- 
+
   gl.clear(gl.COLOR_BUFFER_BIT);
- 
+
   gl.drawArrays(gl.TRIANGLE_FAN, 0, n);
 }
 function animate(tr, right) {
@@ -933,3 +941,211 @@ function animate(tr, right) {
   else newTR -= 0.01;
   return newTR;
 }
+*/
+// Cube  
+/*
+var vShader=`
+attribute vec4 myPosition;
+uniform mat4 myFinaleMatrix;
+void main() {
+    gl_Position = myFinaleMatrix*myPosition;
+    gl_PointSize = 10.0;
+}`;
+var fShader=`
+precision mediump float;
+uniform vec4 myColor;
+void main(){
+    gl_FragColor = myColor;
+}`; 
+
+var transStep1 = 0.5;
+var Tx = 0.0;
+var transStep2 = 0.5;
+var Ty = 0.0
+
+var angleStep = -90.0;
+var currentAngle = 0.0;
+
+function main() {
+    var canvas=document.getElementById("webgl");
+    var gl = getWebGLContext(canvas);
+
+    initShaders(gl,vShader,fShader)
+
+    //getting attrib and uniform
+    var positionLocation = gl.getAttribLocation(gl.program,"myPosition");
+    var colorLocation = gl.getUniformLocation(gl.program,"myColor");
+    var finaleMatrixLocation = gl.getUniformLocation(gl.program,"myFinaleMatrix");
+
+    //init buffer
+    var n= initBuffer(gl,positionLocation);
+
+    //set finale matrix
+    var finaleMatrix = new Matrix4();
+
+    gl.clearColor(0.0,0.0,0.0,1.0);
+
+
+    var tick = function(){
+        animate();
+        draw(gl,finaleMatrixLocation,finaleMatrix,colorLocation);
+        requestAnimationFrame(tick);
+    };
+    tick();
+}
+function initBuffer(gl,positionLocation)
+{
+    var vertices = new Float32Array([
+        -0.5-0.30,-0.25-0.25,
+        -0.5-0.30, 0.25-0.25,
+        0.0-0.30,0.05-0.25,
+      
+        -0.5-0.30,-0.25-0.25,
+        0.0-0.30,0.05-0.25,
+        0.0-0.30,-0.45-0.25,
+        
+        -0.5-0.25, 0.25-.10,
+        0.0 -0.25, 0.45-.10,
+        0.0-0.25,0.05-.10,
+
+        0.0 -0.25, 0.45-.10,
+        0.0-0.25,0.05-.10,
+        0.5-0.25,0.25-.10,
+        
+        0.5-0.20, 0.25-0.25,
+        0.0-0.20,0.05-0.25,
+        0.0-0.20,-0.45-0.25,
+        
+        0.5-0.20, 0.25-0.25,
+        0.5-0.20,-0.25-0.25,
+        0.0-0.20,-0.45-0.25
+    ]);
+    var n = 18;
+
+    var myBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,myBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STATIC_DRAW);
+    gl.vertexAttribPointer(positionLocation,2,gl.FLOAT,false,0,0);
+    gl.enableVertexAttribArray(positionLocation); 
+    return n; 
+}
+function draw(gl,finaleMatrixLocation,finaleMatrix,colorLocation) {
+    finaleMatrix.setTranslate(Tx,Ty,0.0);
+    finaleMatrix.rotate(currentAngle,0.0,0.0,1.0);
+    gl.uniformMatrix4fv(finaleMatrixLocation,false,finaleMatrix.elements);
+    finaleDraw(gl,colorLocation);
+}
+
+function finaleDraw(gl,colorLocation) {
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform4f(colorLocation,Math.random(),Math.random(),Math.random(),1.0);
+    gl.drawArrays(gl.TRIANGLES,0,18);
+    gl.uniform4f(colorLocation,Math.random(),Math.random(),Math.random(),1.0);
+    gl.drawArrays(gl.TRIANGLES,6,6);
+    gl.uniform4f(colorLocation,Math.random(),Math.random(),Math.random(),1.0); 
+    gl.drawArrays(gl.TRIANGLES,12,6);
+}
+var lastTime=Date.now();
+function animate() {
+    var now = Date.now();
+    var elapse = now - lastTime;
+    lastTime = now;
+    Tx = Tx + (transStep1 * elapse) / 1000.0;
+    if(Tx > 0.7 || Tx < -0.2)
+    transStep1 *=-1;
+    Ty = Ty + (transStep2 * elapse) / 1000.0;
+    if(Ty > 0.7 || Ty < -0.2)
+    transStep2 *=-1;
+    currentAngle = currentAngle + (angleStep * elapse) / 1000.0;
+    currentAngle %= 360;
+}
+*/
+/*
+// Rotating Translation Square
+var Vshader = `
+attribute vec4 Position;
+uniform mat4 vMatrix;
+void main(){
+  gl_Position = vMatrix*Position;
+}`;
+var Fshader = `
+void main(){
+  gl_FragColor = vec4 (1.0,0.0,0.0,1.0);
+}`;
+
+var transStep1 = 1.0;
+var Tx =0.0;
+var transStep2 = 2.0;
+var Ty =0.0;
+var angleStep = 45.0;
+
+function main() {
+   // Retrieve <canvas> element
+   var canvas = document.getElementById('webgl');
+ 
+   // Get the rendering context for WebGL
+   var gl = canvas.getContext('webgl');
+   if (!gl) {
+     console.log('Failed to get the rendering context for WebGL');
+     return;
+   }
+
+   initShaders(gl,Vshader,Fshader);
+
+   var n = initBuffers(gl);
+
+      // Set clear color
+      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+   var vMatrix = gl.getUniformLocation(gl.program,'vMatrix');
+
+   var Matrix = new Matrix4();
+
+   var currentAngle = 0.0;
+  
+   var tick = function(){
+    currentAngle = animate(currentAngle);
+    draw(gl,n,vMatrix,Matrix,currentAngle);
+    requestAnimationFrame(tick);
+   }
+   tick();
+ }
+ function initBuffers(gl){
+  var vertices = new Float32Array([
+    -0.2, 0.2, 
+     0.2, 0.2, 
+     0.2, -0.2, 
+    -0.2, -0.2
+  ]);
+  var n = 4;
+  var Buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, Buffer);
+  gl.bufferData(gl.ARRAY_BUFFER,vertices,gl.STATIC_DRAW);
+  var Position = gl.getAttribLocation(gl.program, 'Position');
+  gl.vertexAttribPointer(Position,2,gl.FLOAT,false,0,0);
+  gl.enableVertexAttribArray(Position);
+  return n;
+ }
+ var last = Date.now();
+ function animate(currentAngle){
+  var now = Date.now();
+  var elapsed = now - last;
+  last = now ; 
+  Tx = Tx + (transStep1 * elapsed) / 1000.0;
+  if(Tx > 0.8 || Tx < -0.8)
+    transStep1 *=-1;
+    Ty = Ty + (transStep2 * elapsed) / 1000.0;
+  if(Ty > 0.8 || Ty < -0.8)
+    transStep2 *=-1;
+
+    currentAngle = currentAngle +(angleStep*elapsed) / 1000.0;
+    return currentAngle %=360;
+ }
+ function draw(gl,n,vMatrix,Matrix,currentAngle){
+  Matrix.setTranslate(Tx,Ty,0);
+  Matrix.rotate(currentAngle,0.0,0.0,1.0);
+  gl.uniformMatrix4fv(vMatrix, false,Matrix.elements);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.drawArrays(gl.TRIANGLE_FAN,0, n);
+ }
+*/
